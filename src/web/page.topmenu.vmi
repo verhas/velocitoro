@@ -1,0 +1,4 @@
+<div class="topmenu">
+    <div class="date">$date.get('yyyy-MM-dd') 1.0.0</div>
+    aaaa | aaaa | aaaa
+</div>

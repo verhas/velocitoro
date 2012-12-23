@@ -1,0 +1,32 @@
+  ---
+   Using Velocity with Velocitoro
+  ---
+
+Using Velocity with Velocitoro
+
+ Velocitoro is generally based on Velocity. When you create your web site you
+have files that are copied verbatim and have files that are processed by
+Velocitoro. These files (which have a shadow file, that bear the same name
+and the extension <<<.vm>>>) should contain Velocity macros.
+
+ Because Velocitoro uses Velocity you have the full freedom of Velocity macro
+engine to define macros, include other files using the velocity command
+
+-----------------------
+ #parse( "otherfile.vmi" )
+-----------------------
+
+ Generally you will have pages that are similar and have some parts that look
+the same. You will gather these page fragments into <<<.vmi>>> files and
+define macros to generate the page fragments. There is a detailed and complex
+example {{{navibar.html}how to create a navigational bar}} using velocity macros
+and Groovy.
+
+ To get acquainted with the ideas and the technic have a look at the HTML
+templates of this project and the play around with them a little.
+
+DateTool
+
+ In the macro files you can have access to two objects. One of them is called
+<<<$groovy>>> the other one is <<<$date>>>. The <<<$groovy>>> object is used to
+call Groovy scripts, while <<<$date>>> is to access the Velocity date tool.

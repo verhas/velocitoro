@@ -1,0 +1,32 @@
+                              ---
+                        Invoking Groovy Scripts from Velocitoro
+                              ---
+
+
+Invoking Groovy Scripts
+
+ To invoke Groovy scripts the built-in object <<<$groovy>>> has to be used. For
+example:
+
++----------------------------------------------------------------+
+           #set( $a = $groovy.invoke("test.groovy","aaa") )
++----------------------------------------------------------------+
+
+ This code will invoke the script <<<test.groovy>>> which is usually in the
+same directory where the source files are. The file <<<test.groovy>>> should
+contain a Groovy script. The argument to the script in the example above
+is the string <<<"aaa">>>. You can specify arbitrary number of arguments. The
+script can access these values through the variable <<<args>>>.
+
+ The return value of the script in the example above will be stored into the
+Velocity variable <<<$a>>>. This can be a string and can be inserted into the
+html output or it can be a reference to any object that you can invoke later
+using the Velocity notation <<<$a.method()>>>
+
+ The groovy scripts have access to a context object named <<<context>>>. This
+objects is of type
+{{{apidocs/com/verhas/velocitoro/GroovyContext.html}<<<GroovyContext>>>}}.
+This object is created before the first pass starts and is maintained during the
+execution of the scripts. Using this object a script may know the name of the
+template file, the output file,  the source directory, the target directory,
+the actual pass.

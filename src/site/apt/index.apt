@@ -1,0 +1,64 @@
+                              ---
+        Velocitoro, a web site templating tool
+                              ---
+
+Introduction
+
+ Velocitoro is a web site creation tool, that lets you create templates, and
+macros (Velocity combined with Groovy) and compiles the templates to the final
+web pages. This way HTML structures that appear on many pages need to be
+maintained in a single file and the other files can include them.
+
+ To create a web site this way you create the html files that may contain
+velocity macros. You also create macro files, which contain only macros. You
+can reference macro files from the html files. You can also use images and
+other files in your source.
+
+ When Velocitoro runs it will first copy all the files from your source
+directory to the target directory recursively except the files that have the
+extension <<<.vm>>> and <<<.vmi>>> (for explanation see them later).
+
+ After all files copied Velocitoro starts to process all source files from
+your source directory that has a shadow file with the extension <<<.vm>>> and
+the result of the processing will be written into the target directory
+eventually overwriting the copied file.
+
+ For example the file <<<index.html>>> will be processed by Velocitory only if
+there is another file named <<<index.html.vm>>>. The file <<<index.html.vm>>>
+is the shadow file and its content is ignored. Shadow files usually have length
+zero.
+
+ The files that have the extension <<<.vmi>>> serve as marcos and page fragments
+that are included by other pages.
+
+  <<<.vm>>> extension stands for <V>elocity <M>acro and the extention
+<<<.vmi>>> stands for <V>elocity <M>acro <I>nclude.
+
+ For further reading visit the following documentation pages:
+
+ * {{{engine.html}The Velocitoro Engine}}
+
+ * {{{velocity.html}Using Velocity with Velocitoro}}
+
+ * {{{groovy.html}Using groovy with Velocitoro}}
+
+ * {{{maven.html}Using Velocitoro as a maven plugin}}
+
+ * {{{ant.html}Using Velocitoro as ant task}}
+
+ * {{{commandline.html}Using Velocitoro from the Command Line}}
+
+ * {{{navibar.html}Sample navibar scripts}}
+
+ * {{{compiling.html}Compiling Velocitoro}}
+
+ * {{{name.html}Name of the Game}}
+
+ []
+
+Versions of Velocitoro
+
+ Velocitoro is available as a command line tool, and as a maven plugin. We plan
+to deliver a version as an ANT task.
+
+

@@ -1,0 +1,19 @@
+
+#macro( headMenuStart $text $url )
+  <div class="head">
+    <a class="menuHeadText" href="$url">$text</a>
+#end
+#macro( headMenuEnd )</div>#end
+
+#macro( menuStart $text $url )
+            <div class="text">
+                <a href="$url">$text</a>
+
+#end
+#macro( menuEnd )</div>#end
+
+#macro( subMenu $text $url )
+  <div>
+    <a href="$url">$text</a>
+  </div>
+#end

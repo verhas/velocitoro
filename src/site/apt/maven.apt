@@ -1,0 +1,137 @@
+                                 ---
+                   Velocitoro is a Maven Plugin
+                                 ---
+
+Velocitoro is a Maven plugin
+
+ Velocitoro was developed to be a Maven plugin and was tested using Maven 2.2.0
+Most probably we will test it with later versions as Maven develops because we
+extensively use Maven for our developments.
+
+ To install Velocitoro as a Maven plugin you have to install or deploy it. It is
+recommended that you have Nexus as a repository manager for your company, but
+generally Velocitoro does not require this. You can use it standalone.
+
+ If you use Maven the best approach to install Velocitoro is to download the
+source and compile it with the command <<<mvn deploy>>> or <<<mvn install>>>.
+
+ It is also recommended, although not neccessary to insert the lines:
+
+----------------------------------------------------------
+    <pluginGroups>
+        <pluginGroup>com.verhas.maven.plugins</pluginGroup>
+    </pluginGroups>
+----------------------------------------------------------
+
+ into your <<<settings.xml>>> file, so you need not specify the <<<groupId>>>
+when invoking Velocitoro.
+
+ After doing this you can invoke Velocitoro from your project main directory:
+
+----------------------------------------------------------
+          mvn velocitoro:velocitoro
+----------------------------------------------------------
+
+ Since you have downloaded Velocitoro you can do it for this project on your
+local copy and you will get soon your compiled web site in <<<target/web>>>.
+
+Configuring Velocitoro
+
+ Velocitoro as a Maven plugin can be fully configured. To do yo you should
+specify the plugin in your <<<pom.xml>>> file:
+
+----------------------------------------------------------
+           <plugin>
+                <groupId>com.verhas.maven.plugins</groupId>
+                <artifactId>velocitoro-maven-plugin</artifactId>
+                <configuration>
+                    <passes>2</passes>
+                </configuration>
+            </plugin>
+----------------------------------------------------------
+
+ The sample above specifies that we need two passes instead of the default one.
+(For more on passes see
+{{{engine.html}documentation on the Velocitoro engine}}.)
+
+ To configure the plugin you can use the following XML tags:
+
+ * <<<sourceDirectory>>> the source directory where the source files are. The
+default value is <<<src/web>>>.
+
+ * <<<targetDirectory>>> the target directory where the verbatim copied files
+and the processed files are stored. The default value is <<<target/web>>>
+
+ * <<<groovyClassPaths>>> the list of directories where the Groovy classes are.
+The default value contains a single entry, which is <<<src/main/groovy>>>.
+
+ * <<<templateEncoding>>> is the character encoding for the templates. The
+default value is <<<UTF-8>>>.
+
+ * <<<scriptDirectory>>> is the directory where the groovy scripts to be invoked
+from the templates are. The default value is <<<sourceDirectory>>>. If you set
+<<<sourceDirectory>>> to a value different from the default but does not set
+<<<scriptDirectory>>> the location of the scripts will also be changed to the
+set value of <<<sourceDirectory>>>.
+
+ * <<<passes>>> the number of passes to run velocity on the files that have
+shadow file. Each pass runs through each file and then it starts again in the
+same order through the same files. The default value is 1.
+
+ * <<<ignoredExtensions>>> should list the extensions that are to be ignored by
+Velocitoro. These are usually <<<vm>>>, <<<vmi>>> and <<<groovy>>>, because
+files with any of these extensions serve some special purpose and need not be
+copied verbatim. The list cited here is the default value. The configuration may
+specify other extensions. The extensions listed in the configuration should not
+contain the dot, therefore writing
+
+----------------------------------------------------------
+           <plugin>
+                <groupId>com.verhas.maven.plugins</groupId>
+                <artifactId>velocitoro-maven-plugin</artifactId>
+                <configuration>
+                    <ignoredExtensions>
+                    <!-- BAD EXAMPLE!!!! -->
+                         <extension>.vmi</extension>
+                    </ignoredExtensions>
+                </configuration>
+            </plugin>
+----------------------------------------------------------
+
+ is bad. Note also that this list is effective only for the copying phase. When
+the files are processed by Velocitoro through velocity and groovy this
+configuration parameter is not taken into account.
+
+ * <<<shadowExtension>>> should specify the extension for the shadow files.
+The default value is <<<vm>>>.
+
+ * <<<debug>>> may be set to true to switch on debug output.
+
+ []
+
+ The configuration values can also be specified on the command line. In this
+case the <<<-Dvelocitoro.xxx>>> format has to be used, where <<<xxx>>> is the
+name of the option. For example
+
+----------------------------------------------------------
+mvn velocitoro:velocitoro -Dvelocitoro.debug=true
+----------------------------------------------------------
+
+ will result some output, like:
+
+----------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] VELOCITORO DUMP
+[INFO] ------------------------------------------------------------------------
+[INFO] sourceDirectory=src/web
+[INFO] targetDirectory=target/web
+[INFO] scriptDirectory=null
+[INFO] groovyClassPaths=src/main/groovy
+[INFO] passes=2
+[INFO] templateEncoding=UTF-8
+[INFO] ignoredExtensions=vm
+[INFO] ignoredExtensions=vmi
+[INFO] ignoredExtensions=groovy
+[INFO] shadowExtension=vm
+[INFO] ------------------------------------------------------------------------
+----------------------------------------------------------

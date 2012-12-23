@@ -1,0 +1,45 @@
+                           ---
+            Using Velocitoro as ANT task
+                           ---
+
+ Velocitoro can be used as an ant task. To do so you need the binary compilation
+of Velocitoro and has to define the <<<taskdef>>> for velocitoro.
+
+ A sample <<<build.xml>>> that compiles Velocitoro (starting maven) and then
+starts Velocitoro as an ant task is displayed here:
+
+--------------------------------------------------------------------------
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Velocitoro" basedir="." default="velocitoro">
+
+    <target name="build"
+    description="build the task and the dependencies jar and place itproperly">
+        <exec dir="." executable="cmd" os="Windows XP">
+            <arg line="/c mvn.bat assembly:assembly"/>
+        </exec>
+        <unzip dest="lib">
+            <fileset dir="target/site">
+                <include name="velocitoro-maven-plugin-*-bin.zip"/>
+            </fileset>
+        </unzip>
+    </target>
+
+    <target name="velocitoro" description="Compile Html.vm files">
+        <taskdef name="velocitoro" classname="com.verhas.ant.tasks.Task">
+            <classpath>
+                <fileset dir="lib/lib">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+        <velocitoro/>
+    </target>
+
+</project>
+----------------------------------------------------------------------------
+
+ The target <<<build>>> invokes maven and unzips the compiled JAR files into the
+directory lib. The target <<<veocitoro>>> calls the Velocitoro as ANT task.

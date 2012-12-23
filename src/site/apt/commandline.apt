@@ -1,0 +1,14 @@
+                                ---
+               Using Velocitoro from the Command Line
+                                ---
+
+ Velocitoro is delivered as a JAR file, and contains a <<<public static main>>>
+method in the class <<<Velocitoro>>> which is in the default package.
+
+ The current version starts the Velocitoro engine with the default settings.
+
+ It is planned to develop a more complex command line interface and support
+Windows batch as well as UNIX shell scripts to start the program.
+
+ Currently the recommended way to start to use Velocitoro is to use it as a
+maven plugin.

@@ -1,0 +1,71 @@
+                           ---
+                 Compiling Velocitoro
+                           ---
+
+Compiling Velocitoro
+
+ Compiling Velicotoro you need Java 1.5 and Maven installed. We compiled
+the code using Maven 2.2.0, but it should compile with later versions as well.
+
+ If you have the prerequisites compiling is straightforward, all you have to say
+is
+
+---------
+mvn compile
+---------
+
+ There can only be one issue with the compilation. The project itself contains
+sample web templates that can be compiled using Velocitoro. Because of this the
+POM file references the Velocitoro plugin. If you do not have any version of
+the plugin in any of the repositories you access then Maven will stop and
+complain.
+
+--------------------------------------------------------------------------------
+$ mvn compile
+
+$ set MAVEN_OPTS=-Xmx1024m -Djavax.net.ssl.trustStore=c:/home/verhas/.m2/jssecacerts
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Velocitoro Maven Plugin
+[INFO]    task-segment: [compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] artifact com.verhas.maven.plugins:velocitoro-maven-plugin: checking ...
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD ERROR
+[INFO] ------------------------------------------------------------------------
+[INFO] The plugin 'com.verhas.maven.plugins:velocitoro-maven-plugin' does not ...
+[INFO] ------------------------------------------------------------------------
+[INFO] For more information, run Maven with the -e switch
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 22 seconds
+[INFO] Finished at: Mon Dec 14 12:11:07 CET 2009
+[INFO] Final Memory: 5M/10M
+[INFO] ------------------------------------------------------------------------
+$
+--------------------------------------------------------------------------------
+
+ To overcome this issue temporarily comment out the plugin in the <<<pom.xml>>>
+file:
+
+--------------------------------------------------------------------------------
+ ...
+   <build>
+        <plugins>
+    <!--        <plugin>
+                <groupId>com.verhas.maven.plugins</groupId>
+                <artifactId>velocitoro-maven-plugin</artifactId>
+                <configuration>
+                    <passes>2</passes>
+                </configuration>
+            </plugin>                       -->
+            <plugin>
+ ...
+--------------------------------------------------------------------------------
+
+ Do <<not>> forget to remove the commenting after you compiled and
+
+---------------------------
+mvn install
+---------------------------
+
+ installed the plugin.

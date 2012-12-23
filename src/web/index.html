@@ -1,0 +1,62 @@
+#parse( "macros.vmi" )
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    #parse( "page.head.vmi" )
+    <body>
+        #parse( "page.headline.vmi" )
+        #parse( "page.topmenu.vmi" )
+        #parse( "page.leftmenu.vmi" )
+        <div class="textBody">
+            <p class="chapter">What is Velocitoro?</p>
+            <p class="texto">
+                Velocitoro is a Maven 2.0 plugin. It creates web site
+                documentation for your project.
+                #set( $a = $groovy.invoke("test.groovy","aaa") )
+                $a
+            </p>
+            <p class="texto">
+                Note that this plugin does not replace the standard 'site'
+                plugin. It has different aim. While 'site' creates technical
+                documentation, velocitoro is aiming to create <i>"marketing"</i>
+                documentation.
+            </p>
+            <p class="texto">
+                Usage in short: Create the web site in <tt>src/web</tt>.
+                executing <tt>mvn com.verhas.maven:maven-velocitoro-plugin:velocitoro</tt>
+                will copy all files (except those that have extension <tt>.vmi</tt>
+                or <tt>.vm</tt> to <tt>target/web</tt>. After this velocitoro
+                will process all files that have a "shadow" file with the
+                extension <tt>.vm</tt> using Apache Velocity and overwrite the
+                original copied content.
+            </p>
+            <p class="chapter">What is a shadow file?</p>
+            <p class="texto">
+                Note that if there is a file <tt>index.html.vm</tt> and
+                <tt>index.html</tt> then the latter will be processed. The shadow
+                file <tt>index.html.vm</tt> may have any content: it is ignored.
+                It's sole purpose is to indicate that <tt>index.html</tt> has to
+                be processed.
+            </p>
+            <p class="texto">
+                Why not processing <tt>index.html.vm</tt>? Because this way
+                your IDE editor can rely on the extension
+                of the file and guess the type of the content file when you edit.
+                If your html is not totally mixed up with Velocity macros
+                you may still get a kind of draft view in a browser without
+                executing velocitoro.
+            </p>
+            <p class="chapter">.vmi files?</p>
+            <p class="texto">
+                What are <tt>.vmi</tt> files? The are totally ignored except you
+                can <tt>#</tt><tt>parse</tt> them from any file that is processed
+                using velocity.
+            </p>
+            <p class="chapter">Name of the game</p>
+            <p class="texto">
+                Velocitoro was not found by Google. It sounds Spanish and it is
+                cool. Velocity means what it means: "distance travelled per unit
+                time" and 'toro' means bull. Thus velocitoro is something like a 'fast bull' .
+            </p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,134 @@
+<!--
+/*
+#*
+Document   : site.css
+Created on : 2009.03.05., 17:07:49
+Author     : Peter Verhas <peter@verhas.com>
+Description:
+*#
+#parse( "macros.vmi" )
+*/
+
+root { 
+    display: block;
+}
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/*
+#*
+The menu on the left side.
+*#
+*/
+div.menu {
+    width: 150pt;
+    float: left;
+    border-style: dotted;
+    border-width: 1pt;
+    border-color: black;
+    font-size: 10px;
+    background-color: white;
+    font-family:Tahoma;
+    text-align: left;
+    padding: 2pt;
+    margin: 0pt;
+}
+div.textBody {
+    width: 442pt;
+    float: left;
+    border-style: dotted;
+    border-width: 1pt;
+    border-color: black;
+    font-size: 10px;
+    background-color: white;
+    font-family:Tahoma;
+    text-align: left;
+    padding: 2pt;
+    margin: 0pt;
+
+}
+p.chapter {
+    font-size: 24px;
+    font-weight: normal;
+    font-family: Verdana;
+    text-align: left;
+    color: silver;
+    padding: 2pt;
+    margin: 0pt;
+}
+p.texto {
+    font-size: 12px;
+    font-weight: normal;
+    font-family: Verdana;
+    text-align: left;
+    color: black;
+    padding: 2pt;
+    margin: 0pt;
+
+}
+div.menu div.head {
+    width: 150pt;
+    font-weight:bold;
+    color: green;
+    font-size: 12px;
+    background-color: white;
+    padding: 0pt;
+    margin: 0pt;
+}
+div.menu div.text{
+    width: 100pt;
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    background-color: white;
+    padding-left: 2pt;
+    margin-left: 2pt;
+}
+div.menu div.text div {
+    width: 100pt;
+    font-weight: normal;
+    color: black;
+    font-size: 12px;
+    background-color: white;
+    padding-left: 2pt;
+    margin-left: 2pt;
+    border-left-style: dotted;
+    border-left-width: 1pt;
+}
+
+div.topmenu {
+    font-style: normal;
+    font-family: Verdana;
+    font-size: x-small;
+    font-weight: bold;
+
+    border-top-style: dotted;
+    border-bottom-style: dotted;
+
+    border-top-width: 1pt;
+    border-bottom-width: 1pt;
+
+    width: 600pt;
+    padding: 2pt;
+}
+
+.date {
+    font-style: normal;
+    font-family: Tahoma;
+    font-size: 8pt;
+    font-weight: normal;
+    padding: 0pt;
+    width: 158pt;
+    float:left;
+}
+div.headline {
+    font-size: 20pt;
+    font-family: Verdana;
+    font-weight: bold;
+}
+-->

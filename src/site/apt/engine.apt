@@ -1,0 +1,98 @@
+   ---
+   The Velocitoro Engine
+   ---
+
+The Velocitoro Engine
+
+ The Velocitoro engine is the core of Velocitoro that can be started via the
+interfaces:
+
+  * command line
+
+  * maven plugin
+
+  * ant task (planned feature)
+
+  * programmatically creating a <<<new Engine()>>> setting its parameters and
+calling <<<engine.createSite()>>>.
+
+[]
+
+ In the following sections I describe the phases that the engine performs
+during its work. For further information on how to invoke the engine
+programmatically consult the
+{{{apidocs/com/verhas/velocitoro/Engine.html}<<<Engine>>>}}
+JavaDoc page.
+
+Phase 0, copy
+
+ When Velocitoro starts it first copies all files from the source directory to
+the target directory. The copy ignores the files that have extensions listed on
+the ignore list and the copy is done recursively.
+
+ Velocitoro also creates the necessary directories for the files.
+
++----------------------------------------------------------------+
+
+             copy
+src/web/* -----------> target/web
+
++----------------------------------------------------------------+
+
+Phase 1, processing
+
+ After the copying Velocitoro processes the files in the source directory. This
+processing is done via velocity with groovy optionally.
+
+ Velocitoro first lists all the files recursively in the source directory that
+has the extension <<<.vm>>> Then tries to open each file having the same name
+but without the extension.
+
++----------------------------------------------------------------+
+
+   src/web/index.html.vm      process
+   src/web/index.html        ---------->    targer/web/index.html
+
++----------------------------------------------------------------+
+
+ The file with the extension <<<.vm>>> is called shadow file and its sole purpose
+is to signal for Velocitoro that the other file bearing the same name without
+this extension should be processed.
+
+ The processing is done via the macro engine Velocity. It means that the
+processed source file may contain Velocity macros, can include other files
+and can access objects provided by Velocitoro.
+
+ Velocitoro does this processing for each file one after the other, and it
+writes the result to the target directory. This will overwrite the previously
+copied content.
+
+Extra Phases
+
+ The processing of each file is done in a cycle that runs once by default.
+However it may be altered, in which case the processing runs more than once.
+This is determined by the configuration parameter <<<passes>>>.
+
+ It can be friendly when some groovy processing is done. Groovy scripts get
+access to a <<<context>>> object that retains it value during the whole
+processing. Groovy scripts may collect information during the first phase and
+create the proper output during the second phase. There is no need usually more
+that two passes.
+
+ A typical example is to create bread crumb navigation stripe using groovy
+scripts. Each template file only names the display name it has to use in the
+bread crumb stripe and defines who its parent is. During the first pass the
+groovy script gathers the information, and during the second pass having
+acquaintance by all template files can generate the navigational stripe for each
+template output.
+
+Velocity Objects
+
+ There are two objects that a template can access in Velocitoro. The first one
+is <<<$date>>>, the second one is <<<$groovy>>>.
+
+ <<<$date>>> is the standard Velocity date tool. You can use this object to
+display the current date of the processing or some other date manipulation.
+
+ <<<$groovy>>> may be used to invoke Groovy scripts.
+

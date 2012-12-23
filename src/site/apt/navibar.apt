@@ -1,0 +1,297 @@
+   ---
+Sample Navibar Groovy
+   ---
+
+Sample Navi Bar Scripts
+
+ This page describes sample Groovy and Velocity scripts that help to create a
+navigational bar to web pages. The aim of this tutorial to help you get started
+writing groovy scripts that support Velocitoro. If you specifically need a navi
+bar some sort of, that is your bonus.
+
+ When you create a web site it is advised to
+display a bread crumb navigational bar somewhere on the top of the page showing
+the actual position of the reader inside the site.
+
+ This way you structure your pages into a tree structure and you show a list of
+click-able tags in the navi bar to the pages that are above the current page. For
+example you maintain a web page that sells domestic machines. You are on a page
+describing a hoover, which is under the page for hoovers, which itself is under
+the products page, which opens from the home page.
+In this case the navibar looks like
+
+-------------------------------------------------------------------
+   HOME > products > hoovers > rocket hover
+-------------------------------------------------------------------
+
+ with tags <<<HOME>>> and <<<products>>> click-able. The leaf tag <<<hoover>>> is
+eventually not click-able, because you are already there.
+
+ To create a navi bar you may list all the parent pages up to the home page.
+However this method needs a lot of work, error prone, and whenever you move a
+page in the tree hierarchy it is hard to maintain.
+
+ You may start to sell several types of other products in your web shop and
+decide that hoovers will not be listed under the products
+page hoovers but rather under a new page for categories cleaning machines.
+In this case the bread crumb will look
+
+-------------------------------------------------------------------
+   HOME > products > cleaning machines > hoovers > rocket hover
+-------------------------------------------------------------------
+
+ If you maintained the whole path to the leaf pages, then you have to edit each
+page that describes a hoover, the page <hoovers> and of course the new page.
+
+ Instead of this approach we create a Velocity macro where you can define on
+each page
+
+ * the tag of the page as it appears in the bread crumb
+
+ * the parent page.
+
+ []
+
+ The macro will invoke a small groovy script that collects the information
+and builds up the whole tree knowing which page is parent of which other page
+and creates the bread crumb navigational bar based on this information.
+
+Passes
+
+ To do so the we will need two passes, and because the default is to have only
+one pass it has to be configured in the POM file (you know the <<<pom.xml>>>).
+
+ The <<<pom.xml>>> fragment should look something like this
+
+-------------------------------------------------------------------
+            <plugin>
+                <groupId>com.verhas.maven.plugins</groupId>
+                <artifactId>velocitoro-maven-plugin</artifactId>
+                <configuration>
+                    <passes>2</passes>
+                </configuration>
+            </plugin>
+-------------------------------------------------------------------
+
+ This will force Velocitoro the files twice. First it will process each file
+once and then it will perform the same procedure again. The difference between
+the passes is that the Groovy script we are going to create will behave
+different during the first and the second pass.
+
+ During the first pass the script will gather the information of the page tree
+structure and returns some string as result for the bread crumb. What is returns
+during the first pass is not important, because this is overwritten during the
+second pass anyway.
+
+ When the second pass runs the script already knows the tree structure and
+creates the bread crumb for the page requested. But before going into the details
+of the Groovy script we have a look at the velocity macro.
+
+The Velocity Macro
+
+ The velocity macro <<<navibar>>> should be called from a page to have a
+navibar. The example here is the simplified form of the one that we use for
+our corporate home page {{{http://www.verhas.com}}}. Multi-linguality and
+css style was removed to simplify the example and let us focus on the
+functionality.
+
+-------------------------------------------------------------------
+#macro( navibar $tag $parent )
+<div>
+<a href="index.html">HOME</a>
+&gt; $groovy.invoke( "navibar.groovy" , $tag , $parent)
+</div>
+#end
+-------------------------------------------------------------------
+
+ The object <<<groovy>>> is a built-in object, which is provided by Velocitoro
+and its method <<<invoke()>>> should be used to call a groovy script.
+
+ The navibar macro calls the Groovy script <<<navibar.groovy>>> and passes two
+arguments to it: the tag of the file and the parent page. The tag has to be
+provided as it is, while the parent page should be presented without the
+extension <<<.html>>>.
+
+The Groovy Script
+
+
+ The groovy script <<<navibar.groovy>>> is placed in the directory <<<src/web>>>
+along with the HTML macro files and is copied here verbatim without
+simplification:
+
+-------------------------------------------------------------------
+import java.io.File
+
+def pass = context.getPass()
+if( pass == 0 ){
+    def map = context.getMap()
+    def file = context.getInputFileName()
+    map.put(file, [ 'file' : args[0],
+                    'parent' : args[1]+'.html' ] )
+    return ''
+}else{
+    def map = context.getMap()
+    def file = context.getInputFileName()
+    def retVal = ''
+    def sep = ''
+    def loopFile = file
+    def linkMaker = new LinkMaker()
+    while( map.containsKey(loopFile)){
+        def nav = map.get(loopFile)
+        def relName = loopFile
+        boolean leaf = loopFile.equals(file)
+        if( ! leaf ){
+            linkMaker.setLinkSource(file)
+            linkMaker.setLinkDestination(loopFile)
+            relName = linkMaker.getLink()
+        }
+        retVal = (leaf ? '' : "<a href=\"$relName\">") +
+                 nav['file'] + (leaf ? '' : '</a>') +
+        sep + retVal;
+        sep = ' > '
+        loopFile = new File(context.getSourceDir() +
+                   '/' + nav[ 'parent' ]).getAbsolutePath()
+    }
+    return retVal
+}
+-------------------------------------------------------------------
+
+ The first line of the code
+
+-------------------------------------------------------------------
+def pass = context.getPass()
+-------------------------------------------------------------------
+
+ gets the value of the pass. This can be zero or one. The variable <<<context>>>
+is provided for the Groovy scripts by Velocitoro and it is kept intact.
+Velocitoro provides information in it for the script and maintains a Map for the
+scripts to be used. We use this map to store the page hierarchy.
+
+ When the <<<pass>>> is zero then we only collect the information:
+
+-------------------------------------------------------------------
+    def map = context.getMap()
+    def file = context.getInputFileName()
+    map.put(file, [ 'file' : args[0],
+                    'parent' : args[1]+'.html' ] )
+    return ''
+-------------------------------------------------------------------
+
+ The key of the map is the name of the file, which is also provided for the
+scripts via the context. The value associated to the key is a Groovy map with
+two keys <file> and <parent>. The return value of the script, which will be
+inserted into the text of the output file is an empty string. This value is not
+important could be anything, because this is the first pass and the second pass
+will overwrite it.
+
+ When the <<<pass>>> is one we have all the structure in the map and we have to
+create the bread crumb for the current page under processing. This is a bit more
+complex:
+
+-------------------------------------------------------------------
+    def map = context.getMap()
+    def file = context.getInputFileName()
+    def retVal = ''
+    def sep = ''
+    def loopFile = file
+    def linkMaker = new LinkMaker()
+    while( map.containsKey(loopFile)){
+        def nav = map.get(loopFile)
+        def relName = loopFile
+        boolean leaf = loopFile.equals(file)
+        if( ! leaf ){
+            linkMaker.setLinkSource(file)
+            linkMaker.setLinkDestination(loopFile)
+            relName = linkMaker.getLink()
+        }
+        retVal = (leaf ? '' : "<a href=\"$relName\">") +
+                 nav['file'] + (leaf ? '' : '</a>') +
+        sep + retVal;
+        sep = ' > '
+        loopFile = new File(context.getSourceDir() +
+                   '/' + nav[ 'parent' ]).getAbsolutePath()
+    }
+    return retVal
+-------------------------------------------------------------------
+
+ The code builds up the breadrumb HTML in the variable <<<retVal>>>. The
+variable <<<loopVar>>> goes through up fromt he leaf node that we currently
+process to the home node (<<<index.html>>> usually) and in the loop it prepends
+the tags with the appropriate link and separator (<<<sep>>> which is empty
+string while there is nothing in <<<retVal>>>) for each node up in the
+hierarchy.
+
+ The boolean variable <<<leaf>>> will be true when it is the leaf node (the
+current one). In this case there is no need for the html link: we are on the
+page if we see the bread crumb.
+
+ The links is created using relative reference from the current page to the
+page in the navigational bar. To create the relative link we use the class
+<<<LinkMaker>>>, which is also written in Groovy and we will have a look at it
+later.
+
+ The final line of the script returns the built-up content of the script from
+the variable <<<retVal>>>: this will be inserted into the created HTML page.
+
+ Note that if there is some error during processing a Groovy script the error
+message will get into the HTML text, therefore it is important to have a final
+look at the code to ensure that it is perfect.
+
+The Groovy class <<<LinkMaker>>>
+
+ The class is present in the file <<<LinkMaker.groovy>>> in the directory
+<<<src/main/groovy>>>. This is the directory where extra classes can be stored
+when Velocitoro is executed a maven plugin (which is the most debugged and
+most developed and most recommended way anyway).
+
+ The class gets two absolute file names and calculates the relative link from
+the file <<<linkSource>>> to the file <<<linkDestination>>>. The code also
+cares about the file format of Windows that may apply back-slash as path
+separator instead of the normal slash.
+
+-------------------------------------------------------------------
+public class LinkMaker {
+    def linkSource;
+    def linkDestination;
+
+    def getLink(){
+
+        System.out.println(linkSource)
+        System.out.println(linkDestination)
+        linkSource = linkSource.replaceAll("\\\\","/")
+        linkDestination = linkDestination.replaceAll("\\\\","/")
+        String[] srcArray = linkSource.split("/")
+        String[] dstArray = linkDestination.split("/")
+        while( srcArray.length != 0 &&
+            dstArray.length != 0 &&
+            srcArray[0].equals(dstArray[0]) ){
+            srcArray = srcArray[1..srcArray.length-1]
+            dstArray = dstArray[1..dstArray.length-1]
+        }
+        def link = ''
+        while( srcArray.length > 1 ){
+            link += '../'
+            srcArray = srcArray[1..srcArray.length-1]
+        }
+        while( dstArray.length > 1 ){
+            link += dstArray[0]
+            dstArray = dstArray[1..dstArray.length-1]
+        }
+        link += dstArray[0]
+        return link
+    }
+}
+-------------------------------------------------------------------
+
+ I will not detail how the class works. More or less obvious, readable even
+lacking comments and does not support understanding Velocitoro.
+
+Summing Up
+
+ Using Velocity macros and Groovy we can manage the bread crumbs so that there
+is no need to maintain redundant information in the template files. This way
+when the imagined example the product category page <hoovers> was moved from
+<products> to a sub category <cleaning machines> all we would require the new
+page for the cleaning machines, and to alter the page for hoovers specifying
+that the parent page is not <products> anymore but rather <cleaning machines>.
+The other pages under <hoovers> will automatically inherit the structure.
